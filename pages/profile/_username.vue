@@ -20,13 +20,11 @@
             <button
               v-else
               class="btn btn-sm btn-outline-secondary action-btn"
-              :class="{
-                artive: profile.following,
-              }"
               @click.prevent="onFollow"
             >
               <i class="ion-plus-round"></i>
-              &nbsp; Follow {{$route.params.username}}
+              &nbsp; {{ profile.following ? "UnFollow" : "Follow" }}
+              {{ $route.params.username }}
             </button>
           </div>
         </div>
@@ -54,7 +52,7 @@
                 >
               </li>
               <li class="nav-item">
-                 <nuxt-link
+                <nuxt-link
                   class="nav-link"
                   :class="{ active: tab === 'favorited_articles' }"
                   :to="{
@@ -165,6 +163,7 @@ export default {
     const tab = query.tab || "my_articles";
     const isAuthor = tab === "my_articles";
     const { data } = await ProfileApi.getProfile(params.username);
+    console.log(data);
     const { data: articleData } = await Article.getAllAsync({
       author: isAuthor ? params.username : undefined,
       favorited: tab === "favorited_articles" ? params.username : undefined,
@@ -178,13 +177,13 @@ export default {
       page,
       limit,
       tab,
-      loading: false
+      loading: false,
     };
   },
   watchQuery: ["tab", "page"],
   methods: {
     async onFollow() {
-      if (this.profile.username === $route.state.user.username) return;
+      if (this.profile.username === this.$store.state.user.username) return;
       try {
         if (this.profile.following) {
           await ProfileApi.unFollow(this.profile.username);
