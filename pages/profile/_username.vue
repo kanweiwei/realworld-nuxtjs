@@ -154,6 +154,7 @@
 <script>
 import ProfileApi from "@/services/profile.js";
 import Article from "@/services/articles";
+import FavoriteApi from "@/services/favorite"
 
 export default {
   name: "Profile",
@@ -198,6 +199,27 @@ export default {
     },
     pageRange(num) {
       return Math.max(Math.ceil(num / 20), 1);
+    },
+    onFavorite(article) {
+      if (article.favorited) {
+        FavoriteApi.deleteFavorite(article.slug)
+          .then(({ data }) => {
+            const i = this.articles.findIndex((n) => n.slug === article.slug);
+            if (i > -1) {
+              this.articles.splice(i, 1, data.article);
+            }
+          })
+          .catch((err) => this.$toast.error(err.messaage));
+      } else {
+        FavoriteApi.addFavorite(article.slug)
+          .then(({ data }) => {
+            const i = this.articles.findIndex((n) => n.slug === article.slug);
+            if (i > -1) {
+              this.articles.splice(i, 1, data.article);
+            }
+          })
+          .catch((err) => this.$toast.error(err.messaage));
+      }
     },
   },
 };
