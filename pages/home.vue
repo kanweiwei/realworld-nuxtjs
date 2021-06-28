@@ -70,11 +70,14 @@
                 </nuxt-link>
                 <div class="info">
                   <a href="" class="author">{{ article.author.username }}</a>
-                  <span class="date">{{ article.createdAt | date('MMM/DD YYYY') }}</span>
+                  <span class="date">{{
+                    article.createdAt | date("MMM/DD YYYY")
+                  }}</span>
                 </div>
                 <button
                   class="btn btn-outline-primary btn-sm pull-xs-right"
                   :class="{ active: article.favorited }"
+                  @click.stop.prevent="onFavorite(article)"
                 >
                   <i class="ion-heart"></i> {{ article.favoritesCount }}
                 </button>
@@ -153,6 +156,7 @@
 import { mapState } from "vuex";
 import ArticleApi from "@/services/articles";
 import TagApi from "@/services/tags";
+import FavoriteApi from "@/services/favorite";
 
 export default {
   name: "Home",
@@ -167,7 +171,7 @@ export default {
       const getArticles =
         store.state.user && tab === "your_feed"
           ? ArticleApi.getFeedArticlesAsync
-          : ArticleApi.getAsync;
+          : ArticleApi.getAllAsync;
       const limit = 20;
       const [articleRes, tagRes] = await Promise.all([
         getArticles({
@@ -192,6 +196,27 @@ export default {
   methods: {
     pageRange(num) {
       return Math.max(Math.ceil(num / 20), 1);
+    },
+    onFavorite(article) {
+      if (article.favorited) {
+        FavoriteApi.deleteFavorite(article.slug)
+          .then(({ data }) => {
+            const i = this.articles.findIndex((n) => n.slug === article.slug);
+            if (i > -1) {
+              this.articles.splice(i, 1, data.article);
+            }
+          })
+          .catch((err) => this.$toast.error(err.messaage));
+      } else {
+        FavoriteApi.addFavorite(article.slug)
+          .then(({ data }) => {
+            const i = this.articles.findIndex((n) => n.slug === article.slug);
+            if (i > -1) {
+              this.articles.splice(i, 1, data.article);
+            }
+          })
+          .catch((err) => this.$toast.error(err.messaage));
+      }
     },
   },
 };

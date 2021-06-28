@@ -49,6 +49,7 @@ module.exports = {
       );
     },
   },
+  
   plugins: ["~/plugins/request.js", "~/plugins/dayjs.js"],
   modules: ["@nuxtjs/toast"],
   axios: {
