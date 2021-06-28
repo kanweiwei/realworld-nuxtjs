@@ -12,10 +12,14 @@ export default class User {
 
   /**
    * 注册
-   * @param {*} data 
-   * @returns 
+   * @param {*} data
+   * @returns
    */
   static register(data) {
     return request.post("/api/users", data);
+  }
+
+  static updateUser(data) {
+    return request.put("/api/user", data);
   }
 }

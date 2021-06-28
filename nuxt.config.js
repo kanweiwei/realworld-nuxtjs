@@ -42,7 +42,7 @@ module.exports = {
           },
           {
             name: "editArticle",
-            path: "/editArticle",
+            path: "/editArticle/:slug",
             component: resolve(__dirname, "./pages/editArticle.vue"),
           },
         ]

@@ -3,7 +3,7 @@
     <!-- 顶部导航 -->
     <nav class="navbar navbar-light">
       <div class="container">
-        <a class="navbar-brand" href="index.html">conduit</a>
+        <nuxt-link class="navbar-brand" to="/">conduit</nuxt-link>
         <ul class="nav navbar-nav pull-xs-right">
           <li class="nav-item">
             <!-- Add "active" class when you're on that page" -->
@@ -31,7 +31,7 @@
           </template>
           <li class="nav-item" v-if="user">
             <nuxt-link class="nav-link" :to="'/profile/' + user.username">
-              <img class="user-pic" src="user.image" v-if="user.image" />{{
+              <img class="user-pic" :src="user.image" v-if="user.image" />{{
                 user.username
               }}
             </nuxt-link>

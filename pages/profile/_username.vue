@@ -4,13 +4,18 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img" />
-            <h4>Eric Simons</h4>
+            <img :src="profile.image" v-if="profile.image" class="user-img" />
+            <h4>{{ profile.username }}</h4>
             <p>
-              Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda
-              looks like Peeta from the Hunger Games
+              {{ profile.bio }}
             </p>
-            <button class="btn btn-sm btn-outline-secondary action-btn">
+            <button
+              class="btn btn-sm btn-outline-secondary action-btn"
+              :class="{
+                artive: profile.following,
+              }"
+              @click.prevent="onFollow"
+            >
               <i class="ion-plus-round"></i>
               &nbsp; Follow Eric Simons
             </button>
@@ -82,8 +87,32 @@
 </template>
 
 <script>
+import ProfileApi from "@/services/profile.js";
+
 export default {
   name: "Profile",
+  async asyncData({ params }) {
+    const { data } = await ProfileApi.getProfile(params.username);
+    return {
+      profile: data.profile,
+    };
+  },
+  methods: {
+    async onFollow() {
+      if (this.profile.username === $route.state.user.username) return;
+      try {
+        if (this.profile.following) {
+          await ProfileApi.unFollow(this.profile.username);
+          this.profile.following = false;
+        } else {
+          await ProfileApi.follow(this.profile.username);
+          this.profile.following = true;
+        }
+      } catch (error) {
+        this.$toast.error(error.message);
+      }
+    },
+  },
 };
 </script>
 
