@@ -54,6 +54,8 @@
 </template>
 
 <script>
+import Article from "@/services/articles";
+
 export default {
   name: "article-meta",
   props: ["article"],
@@ -69,7 +71,16 @@ export default {
   },
 
   methods: {
-    async deleteArticle() {},
+    async deleteArticle() {
+      if (this.isAuthor) {
+        try {
+          await Article.deleteArticle(this.article.slug);
+          this.$router.go(-1);
+        } catch (error) {
+          this.$toast.error(error.message);
+        }
+      }
+    },
   },
 };
 </script>

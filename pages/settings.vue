@@ -90,11 +90,13 @@ export default {
           },
         });
         this.$toast.success("update successfully");
-        this.$store.commit("update_user", {
+        const user = Object.assign({}, this.$store.state.user, {
           email: this.email,
           bio: this.bio,
           image: this.image,
         });
+        this.$store.commit("update_user", user);
+        Cookie.set("user", user);
       } catch (error) {
         this.$toast.error(error.message);
       }

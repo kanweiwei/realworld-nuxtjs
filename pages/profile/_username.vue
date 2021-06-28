@@ -9,7 +9,16 @@
             <p>
               {{ profile.bio }}
             </p>
+            <nuxt-link
+              ui-sref="app.settings"
+              class="btn btn-sm btn-outline-secondary action-btn"
+              v-if="profile.username === $store.state.user.username"
+              to="/settings"
+            >
+              <i class="ion-gear-a"></i> Edit Profile Settings
+            </nuxt-link>
             <button
+              v-else
               class="btn btn-sm btn-outline-secondary action-btn"
               :class="{
                 artive: profile.following,

@@ -8,7 +8,7 @@ export const state = () => {
 
 export const mutations = {
   update_user(state, data) {
-    state.user = Object.assign({}, state.user, data);
+    state.user = data;
   },
 };
 
