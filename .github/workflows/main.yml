@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-depoly:
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     steps:
       # 下载源码并切换分支
       - name: Checkout
