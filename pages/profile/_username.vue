@@ -164,7 +164,6 @@ export default {
     const tab = query.tab || "my_articles";
     const isAuthor = tab === "my_articles";
     const { data } = await ProfileApi.getProfile(params.username);
-    console.log(data);
     const { data: articleData } = await Article.getAllAsync({
       author: isAuthor ? params.username : undefined,
       favorited: tab === "favorited_articles" ? params.username : undefined,

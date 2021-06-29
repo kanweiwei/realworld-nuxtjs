@@ -28,15 +28,11 @@
       </button>
     </template>
     <template v-else>
-      <button
-        class="btn btn-sm btn-outline-secondary"
-        :class="{
-          article: article.author.following,
-        }"
-      >
+      <button class="btn btn-sm btn-outline-secondary" @click="onFollow">
         <i class="ion-plus-round"></i>
-        &nbsp; Follow {{ article.author.username }}
-        <span class="counter">(10)</span>
+        &nbsp; {{ article.author.following ? "UnFollow" : "Follow" }}
+        {{ article.author.username }}
+        <span class="counter"></span>
       </button>
       &nbsp;&nbsp;
       <button
@@ -44,6 +40,7 @@
         :class="{
           active: article.favorited,
         }"
+        @click="onFavorite"
       >
         <i class="ion-heart"></i>
         &nbsp; Favorite Post
@@ -55,6 +52,8 @@
 
 <script>
 import Article from "@/services/articles";
+import ProfileApi from "@/services/profile";
+import Favorite from "@/services/favorite";
 
 export default {
   name: "article-meta",
@@ -79,6 +78,38 @@ export default {
         } catch (error) {
           this.$toast.error(error.message);
         }
+      }
+    },
+    async onFollow() {
+      if (this.article.author.username === this.$store.state.user.username)
+        return;
+      try {
+        if (this.article.author.following) {
+          await ProfileApi.unFollow(this.article.author.username);
+          this.article.author.following = false;
+        } else {
+          await ProfileApi.follow(this.article.author.username);
+          this.article.author.following = true;
+        }
+      } catch (error) {
+        this.$toast.error(error.message);
+      }
+    },
+    async onFavorite() {
+      if (this.article.author.username === this.$store.state.user.username)
+        return;
+      try {
+        if (this.article.favorited) {
+          await Favorite.deleteFavorite(this.article.slug);
+          this.article.favorited = false;
+          this.article.favoritesCount--;
+        } else {
+          await Favorite.addFavorite(this.article.slug);
+          this.article.favorited = true;
+          this.article.favoritesCount++;
+        }
+      } catch (error) {
+        this.$toast.error(error.message);
       }
     },
   },
