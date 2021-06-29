@@ -1,0 +1,62 @@
+name: Publish And Deploy RealWorld Nuxtjs
+
+on: 
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-depoly:
+    runs-on: ubuntu-lastest
+    steps:
+      # 下载源码并切换分支
+      - name: Checkout
+        uses: actions/checkout@master
+
+      # 打包构建
+      - name: Build
+        uses: actions/setup-node@master
+      - run: npm install
+      - run: npm run build
+      - run: tar -zcvf release.tgz .nuxt static nuxt.config.js package.json package-lock.json
+
+      # 生成release
+      - name: Release
+        id: create_release
+        uses: actions/create-release@master
+        env:
+          GITUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      # 发布release
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@master
+        env:
+          GITUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload.url }}
+          asset_path: ./release.tgz
+          asset_name: release.tgz
+          asset_content_type: application/x-tgz
+      
+      # 服务器下载release
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ~/www/realword-nuxtjs
+            wget https://github.com/kanweiwei/realworld-nuxtjs/releases/lastest/download/release.tgz -O release.tgz
+            tar -zxvf release.tgz
+            npm install --production
+            pm2 delete all
+            pm2 start index.js --name realworld-nuxtjs
+      
