@@ -58,4 +58,8 @@ module.exports = {
   toast: {
     duration: 1000,
   },
+  server: {
+    host: '0',
+    port: 3000
+  }
 };
