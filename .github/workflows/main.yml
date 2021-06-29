@@ -58,5 +58,5 @@ jobs:
             tar -zxvf release.tgz
             npm install --production
             pm2 delete all
-            pm2 start index.js --name realworld-nuxtjs
+            pm2 start npm --name realworld-nuxtjs -- start
       
