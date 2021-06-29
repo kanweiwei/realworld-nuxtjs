@@ -54,7 +54,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ~/www/realworld-nuxtjs
-            wget https://github.com/kanweiwei/realworld-nuxtjs/releases/lastest/download/release.tgz -O release.tgz
+            wget https://github.com/kanweiwei/realworld-nuxtjs/releases/latest/download/release.tgz -O release.tgz
             tar -zxvf release.tgz
             npm install --production
             pm2 delete all
