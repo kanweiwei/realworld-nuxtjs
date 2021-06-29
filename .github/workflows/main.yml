@@ -53,11 +53,14 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/www/realworld-nuxtjs
-            rm -rf release.tgz
+            cd ~/www/
+            pm2 delete all
+            rm -rf ./realworld-nuxtjs
+            mkdir realworld-nuxtjs
+            cd ./realworld-nuxtjs
             wget https://github.com/kanweiwei/realworld-nuxtjs/releases/latest/download/release.tgz -O release.tgz
             tar -zxvf release.tgz
             npm install --production
-            pm2 delete all
+            
             pm2 start npm --name realworld-nuxtjs -- start
       
